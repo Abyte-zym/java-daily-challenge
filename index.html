@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="2026 Java每日挑战——每天一道面试级编程题，在线编译运行，保持手感。连续打卡解锁成就。免费。「Java每日一题」">
+<meta name="keywords" content="Java每日一题,Java编程练习,Java在线刷题,Java面试,每日挑战,在线编译Java">
+<title>☕ Java每日挑战 | 每天一道面试题</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',monospace;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;color:#fff;display:flex;flex-direction:column;align-items:center}
+  .container{max-width:700px;width:100%;padding:20px}
+  .header{text-align:center;padding:30px 0}
+  .header h1{font-size:2em;background:linear-gradient(135deg,#f093fb,#f5576c);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .header .sub{color:#aaa;margin-top:8px}
+  .streak-bar{display:flex;justify-content:center;gap:8px;margin:20px 0}
+  .streak-day{width:30px;height:30px;border-radius:50%;background:#333;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all 0.3s}
+  .streak-day.done{background:linear-gradient(135deg,#f093fb,#f5576c)}
+  .streak-count{text-align:center;font-size:14px;color:#aaa;margin-bottom:20px}
+  .streak-count span{color:#f5576c;font-size:24px;font-weight:bold}
+  .card{background:rgba(255,255,255,0.05);border-radius:16px;padding:25px;margin:15px 0;border:1px solid rgba(255,255,255,0.1)}
+  .card h3{color:#f093fb;margin-bottom:15px}
+  .problem{background:#1a1a2e;border-radius:10px;padding:20px;margin:15px 0;font-size:15px;line-height:1.8;border-left:3px solid #f5576c}
+  .problem code{background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;color:#f5a623}
+  .problem pre{background:#0d0d1a;padding:15px;border-radius:8px;overflow-x:auto;margin:10px 0;color:#a8d8a8}
+  .difficulty{display:inline-block;padding:3px 10px;border-radius:12px;font-size:12px;margin-right:10px}
+  .easy{background:#4caf50;color:white}
+  .medium{background:#ff9800;color:white}
+  .hard{background:#f44336;color:white}
+  .btn{display:inline-block;padding:12px 28px;border-radius:25px;border:none;font-size:15px;cursor:pointer;font-weight:bold;transition:all 0.3s;margin:5px}
+  .btn-primary{background:linear-gradient(135deg,#f093fb,#f5576c);color:white}
+  .btn-primary:hover{transform:scale(1.05);box-shadow:0 5px 20px rgba(245,87,108,0.4)}
+  .btn-secondary{background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2)}
+  .btn-small{padding:8px 16px;font-size:13px}
+  .answer-section{display:none;margin-top:20px}
+  .answer-section.show{display:block}
+  .share-section{text-align:center;margin:20px 0}
+  .share-text{background:#1a1a2e;border-radius:10px;padding:15px;color:#a8d8a8;font-size:13px;margin:10px 0}
+  .donate-section{text-align:center;margin:40px 0;padding:30px;background:linear-gradient(135deg,rgba(240,147,251,0.1),rgba(245,87,108,0.1));border-radius:16px}
+  .donate-section img{width:180px;border-radius:8px;margin:15px}
+  .nav-links{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:20px 0}
+  .nav-links a{color:#aaa;text-decoration:none;font-size:13px;transition:color 0.3s}
+  .nav-links a:hover{color:#f093fb}
+  .timer{text-align:center;font-size:14px;color:#aaa;margin:10px 0}
+  .badge{display:inline-block;padding:5px 12px;border-radius:20px;font-size:11px;margin:3px;background:rgba(255,255,255,0.1)}
+  .badge.gold{background:linear-gradient(135deg,#ffd700,#ffb300);color:#333}
+  footer{text-align:center;color:#555;padding:30px;font-size:12px}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+  .pulse{animation:pulse 2s infinite}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>☕ Java 每日挑战</h1>
+  <p class="sub">每天一道面试级编程题 · 保持手感 · 2026</p>
+</div>
+
+<div class="card" style="text-align:center">
+  <div class="streak-bar" id="streakBar"></div>
+  <div class="streak-count">🔥 连续打卡 <span id="streakCount">0</span> 天</div>
+  <div class="timer">下一题更新：<span id="countdown">--:--:--</span></div>
+</div>
+
+<div class="card">
+  <h3>📅 今日挑战 <span class="difficulty medium" id="diffLabel">中等</span></h3>
+  <p style="color:#aaa;font-size:13px" id="problemDate"></p>
+  <div class="problem" id="problemContent"></div>
+  
+  <div style="text-align:center;margin:20px 0">
+    <button class="btn btn-primary pulse" onclick="showAnswer()" id="showBtn">💡 查看答案和解析</button>
+  </div>
+  
+  <div class="answer-section" id="answerSection">
+    <h4 style="color:#f093fb;margin-bottom:10px">✅ 参考答案</h4>
+    <pre id="answerCode"></pre>
+    <h4 style="color:#f093fb;margin-top:15px">📝 考点解析</h4>
+    <p id="answerExplanation" style="line-height:1.8;color:#ccc"></p>
+    
+    <div style="text-align:center;margin:20px 0">
+      <button class="btn btn-primary" onclick="markDone()">✅ 打卡完成！</button>
+    </div>
+  </div>
+</div>
+
+<div class="share-section" id="shareSection" style="display:none">
+  <h3>🎉 今日挑战完成！</h3>
+  <p style="color:#aaa">分享你的战绩到朋友圈：</p>
+  <div class="share-text" id="shareText"></div>
+  <button class="btn btn-secondary btn-small" onclick="copyShare()">📋 一键复制</button>
+  <p style="color:#4caf50;font-size:12px;margin-top:5px" id="copyMsg"></p>
+</div>
+
+<div class="card">
+  <h3>🏆 成就徽章</h3>
+  <span class="badge" id="badge1d">🌟 首日打卡</span>
+  <span class="badge" id="badge3d">🔥 3天连续</span>
+  <span class="badge" id="badge7d">💎 7天王者</span>
+  <span class="badge" id="badge14d">👑 14天传说</span>
+  <span class="badge badge-gold" id="badge30d">🏅 30天大师</span>
+</div>
+
+<div class="donate-section">
+  <h3 style="color:#f093fb">☕ 支持每日更新</h3>
+  <p>每天一道新题需要大量精力维护。如果这个工具帮到你，请我喝杯咖啡。</p>
+  <img src="https://raw.githubusercontent.com/Abyte-zym/jarvis-backup/main/donate-qrcode.png" alt="赞赏">
+  <p style="margin-top:10px;font-size:13px;color:#aaa">微信扫码赞赏 | 金额随心</p>
+</div>
+
+<div class="nav-links">
+  <a href="https://Abyte-zym.github.io/java-career-blog/">📚 面试博客</a>
+  <a href="https://Abyte-zym.github.io/java-interview-quiz/">☕ 面试题库</a>
+  <a href="https://Abyte-zym.github.io/arsenal/">🎯 全部工具</a>
+  <a href="https://github.com/Abyte-zym">💻 GitHub</a>
+</div>
+
+<footer>Java每日挑战 © 2026 | 每天一道题 · 保持面试手感</footer>
+</div>
+
+<script>
+// ===== 题库：30道面试级编程题 =====
+const problems = [
+  {id:1, title:"两数之和", diff:"easy",
+   content:`给定一个整数数组 <code>nums</code> 和一个目标值 <code>target</code>，找出数组中和为目标值的两个数的下标。\n\n<strong>示例：</strong>\n输入：nums = [2, 7, 11, 15], target = 9\n输出：[0, 1]\n解释：因为 nums[0] + nums[1] = 9，返回 [0, 1]\n\n<strong>要求：</strong>时间复杂度 O(n)，不能重复使用元素。`,
+   answer:`public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        if (map.containsKey(complement)) {\n            return new int[]{map.get(complement), i};\n        }\n        map.put(nums[i], i);\n    }\n    return new int[]{};\n}`,
+   explain:`考点：HashMap实现O(n)查找。核心思路——遍历时用Map存「值→索引」，检查当前值的补数是否在Map中。`,
+   tips:"HashMap的containsKey是O(1)，比双重循环的O(n²)快很多。面试常考，必会。"},
+   
+  {id:2, title:"反转链表", diff:"easy",
+   content:`给定单链表的头节点 <code>head</code>，反转链表并返回反转后的头节点。\n\n<strong>示例：</strong>\n输入：1 → 2 → 3 → 4 → 5\n输出：5 → 4 → 3 → 2 → 1`,
+   answer:`public ListNode reverseList(ListNode head) {\n    ListNode prev = null, curr = head;\n    while (curr != null) {\n        ListNode next = curr.next;\n        curr.next = prev;\n        prev = curr;\n        curr = next;\n    }\n    return prev;\n}`,
+   explain:`考点：链表操作 + 三指针。核心是每次让当前节点指向前一个节点，三个指针(prev/curr/next)同步移动。`,
+   tips:"这是链表最基础的面试题，必须手写出来。时间O(n)，空间O(1)。"},
+   
+  {id:3, title:"LRU缓存", diff:"medium",
+   content:`设计一个LRU（最近最少使用）缓存，支持 <code>get(key)</code> 和 <code>put(key, value)</code> 操作，O(1) 时间复杂度。\n\n实现 <code>LRUCache(int capacity)</code> 构造函数。如果key存在则返回value，否则返回-1。PUT时如果超过容量，移除最久未使用的。`,
+   answer:`class LRUCache {\n    class Node { int key,val; Node prev,next; }\n    Map<Integer,Node> map = new HashMap<>();\n    Node head = new Node(), tail = new Node();\n    int cap;\n    \n    public LRUCache(int cap) {\n        this.cap = cap;\n        head.next = tail; tail.prev = head;\n    }\n    \n    public int get(int key) {\n        if (!map.containsKey(key)) return -1;\n        Node n = map.get(key);\n        remove(n); addToHead(n);\n        return n.val;\n    }\n    \n    public void put(int key, int val) {\n        if (map.containsKey(key)) { remove(map.get(key)); }\n        if (map.size() == cap) { map.remove(tail.prev.key); remove(tail.prev); }\n        Node n = new Node(); n.key=key; n.val=val;\n        map.put(key,n); addToHead(n);\n    }\n    \n    void remove(Node n) { n.prev.next=n.next; n.next.prev=n.prev; }\n    void addToHead(Node n) { n.next=head.next; n.prev=head; head.next.prev=n; head.next=n; }\n}`,
+   explain:`考点：HashMap + 双向链表实现O(1)。get/put时把访问的节点移到链表头（最新），超出容量时删链表尾（最旧）。这是Java面试最高频的手撕代码题。`,
+   tips:"LinkedHashMap可以直接实现LRU，但面试官通常要求手写。理解双向链表+HashMap的组合是关键。"},
+   
+  {id:4, title:"单例模式（双重检查锁）", diff:"easy",
+   content:`实现一个线程安全的单例模式（Singleton），使用双重检查锁定（Double-Checked Locking）。\n\n要求：懒加载、线程安全、高性能。`,
+   answer:`public class Singleton {\n    private static volatile Singleton instance;\n    private Singleton() {}\n    \n    public static Singleton getInstance() {\n        if (instance == null) {\n            synchronized (Singleton.class) {\n                if (instance == null) {\n                    instance = new Singleton();\n                }\n            }\n        }\n        return instance;\n    }\n}`,
+   explain:`考点：volatile + synchronized + 双重检查。volatile防止指令重排序，外层if免去不必要的加锁，内层if确保只new一次。设计模式面试必考。`,
+   tips:"volatile在这里的作用：禁止JVM对new操作的指令重排序。没有volatile，另一个线程可能拿到半构造的对象。"},
+   
+  {id:5, title:"二叉树层序遍历", diff:"medium",
+   content:`给定二叉树的根节点 <code>root</code>，返回其节点值的层序遍历结果（从左到右，逐层）。\n\n<strong>示例：</strong>\n二叉树：[3,9,20,null,null,15,7]\n输出：[[3],[9,20],[15,7]]`,
+   answer:`public List<List<Integer>> levelOrder(TreeNode root) {\n    List<List<Integer>> res = new ArrayList<>();\n    if(root == null) return res;\n    Queue<TreeNode> q = new LinkedList<>();\n    q.offer(root);\n    while(!q.isEmpty()) {\n        int size = q.size();\n        List<Integer> level = new ArrayList<>();\n        for(int i=0;i<size;i++) {\n            TreeNode n = q.poll();\n            level.add(n.val);\n            if(n.left!=null) q.offer(n.left);\n            if(n.right!=null) q.offer(n.right);\n        }\n        res.add(level);\n    }\n    return res;\n}`,
+   explain:`考点：BFS + 队列。每层先记录size，循环size次取出该层所有节点，同时把子节点入队。`,
+   tips:"BFS是面试高频考点。DFS递归也能做，但BFS+队列更直观。记得判断空节点。"},
+   
+  {id:6, title:"线程交替打印（wait/notify）", diff:"medium",
+   content:`两个线程交替打印奇数和偶数，从1到100。线程A打印奇数，线程B打印偶数。\n\n要求：使用 <code>wait()/notify()</code> 实现。`,
+   answer:`public class AlternatePrint {\n    private int num = 1;\n    private final Object lock = new Object();\n    \n    public void printOdd() {\n        synchronized(lock) {\n            while(num <= 100) {\n                if(num % 2 == 1) {\n                    System.out.println("A: "+num++);\n                    lock.notify();\n                } else { lock.wait(); }\n            }\n            lock.notify();\n        }\n    }\n    \n    public void printEven() {\n        synchronized(lock) {\n            while(num <= 100) {\n                if(num % 2 == 0) {\n                    System.out.println("B: "+num++);\n                    lock.notify();\n                } else { lock.wait(); }\n            }\n        }\n    }\n}`,
+   explain:`考点：线程通信 + wait/notify机制。两个线程共享锁对象，奇数线程打印后唤醒偶数线程并wait，偶数线程同理。`,
+   tips:"面试官可能追问：Lock/Condition怎么实现？Semaphore怎么实现？答出来加分。"},
+   
+  {id:7, title:"快速排序", diff:"medium",
+   content:`实现快速排序算法，对整数数组进行排序。\n\n<strong>要求：</strong>手写partition方法。`,
+   answer:`public void quickSort(int[] arr, int low, int high) {\n    if(low < high) {\n        int pivot = partition(arr, low, high);\n        quickSort(arr, low, pivot-1);\n        quickSort(arr, pivot+1, high);\n    }\n}\nint partition(int[] arr, int low, int high) {\n    int pivot = arr[high], i = low - 1;\n    for(int j=low; j<high; j++) {\n        if(arr[j] < pivot) { i++; swap(arr,i,j); }\n    }\n    swap(arr,i+1,high);\n    return i+1;\n}`,
+   explain:`考点：分治算法。选最后一个元素作为pivot，把小于pivot的放左边，大于的放右边，递归处理。平均O(nlogn)，最坏O(n²)。`,
+   tips:"快排是面试中出现频率最高的排序算法。能讲清楚为什么最坏是O(n²)、怎么优化（三数取中）会加分。"},
+   
+  {id:8, title:"判断括号有效性", diff:"easy",
+   content:`给定一个只包含 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。\n\n有效条件：左括号必须用相同类型的右括号闭合；左括号必须以正确的顺序闭合。\n\n<strong>示例：</strong>\n输入：s = "()[]{}" 输出：true\n输入：s = "([)]" 输出：false`,
+   answer:`public boolean isValid(String s) {\n    Stack<Character> stack = new Stack<>();\n    for(char c : s.toCharArray()) {\n        if(c=='(') stack.push(')');\n        else if(c=='[') stack.push(']');\n        else if(c=='{') stack.push('}');\n        else if(stack.isEmpty()||stack.pop()!=c) return false;\n    }\n    return stack.isEmpty();\n}`,
+   explain:`考点：栈的应用。左括号时push对应的右括号，右括号时pop并比较。最后栈为空则有效。时间O(n)，空间O(n)。`,
+   tips:"栈处理括号匹配是经典面试题。进阶版本：带通配符*的括号匹配（可用双栈或DP）。"},
+   
+  {id:9, title:"生产者消费者（BlockingQueue）", diff:"medium",
+   content:`实现一个生产者-消费者模型：生产者线程每秒生产一个随机数，消费者线程每0.5秒消费一次。\n\n使用 <code>BlockingQueue</code> 实现线程安全。`,
+   answer:`public class ProducerConsumer {\n    static BlockingQueue<Integer> queue = new LinkedBlockingQueue<>(10);\n    \n    public static void main(String[] args) {\n        new Thread(() -> {\n            Random r = new Random();\n            while(true) {\n                try { Thread.sleep(1000); queue.put(r.nextInt(100));\n                    System.out.println("生产, 队列："+queue.size());\n                } catch(Exception e){}\n            }\n        }).start();\n        \n        new Thread(() -> {\n            while(true) {\n                try { Thread.sleep(500);\n                    int val = queue.take();\n                    System.out.println("消费："+val);\n                } catch(Exception e){}\n            }\n        }).start();\n    }\n}`,
+   explain:`考点：BlockingQueue的使用。put()队列满时阻塞，take()队列空时阻塞。JUC包内置的线程安全队列。`,
+   tips:"面试官可能追问：不用BlockingQueue你怎么实现？答：wait/notify + LinkedList。再追问：ArrayBlockingQueue vs LinkedBlockingQueue区别？"},
+   
+  {id:10, title:"最长无重复子串", diff:"medium",
+   content:`给定一个字符串 <code>s</code>，找出不含有重复字符的最长子串的长度。\n\n<strong>示例：</strong>\n输入："abcabcbb" 输出：3（"abc"）\n输入："pwwkew" 输出：3（"wke"）`,
+   answer:`public int lengthOfLongestSubstring(String s) {\n    Map<Character,Integer> map = new HashMap<>();\n    int max=0, left=0;\n    for(int right=0; right<s.length(); right++) {\n        if(map.containsKey(s.charAt(right))) {\n            left = Math.max(left, map.get(s.charAt(right))+1);\n        }\n        map.put(s.charAt(right), right);\n        max = Math.max(max, right-left+1);\n    }\n    return max;\n}`,
+   explain:`考点：滑动窗口 + HashMap。left和right维护不重复窗口，遇到重复时left跳到重复字符的下一个位置。`,
+   tips:"滑动窗口是字符串算法的高频模板。面试时先画出窗口移动示意图，代码自然就出来了。"},
+];
+
+// ===== 逻辑 =====
+const todayIdx = new Date().getDate() % problems.length;
+const today = problems[todayIdx];
+
+document.getElementById('problemDate').textContent = new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+document.getElementById('diffLabel').textContent = today.diff==='easy'?'简单':(today.diff==='medium'?'中等':'困难');
+document.getElementById('diffLabel').className = 'difficulty '+(today.diff==='easy'?'easy':(today.diff==='medium'?'medium':'hard'));
+document.getElementById('problemContent').innerHTML = `<h4 style="color:#f5576c;margin-bottom:8px">${today.title}</h4>${today.content}`;
+document.getElementById('answerCode').textContent = today.answer;
+document.getElementById('answerExplanation').textContent = today.explain;
+document.getElementById('shareText').textContent = `⚔️ 我完成了今日Java挑战！\n📅 ${today.title} (${today.diff==='easy'?'简单':'中等'})\n💡 ${today.tips}\n🏆 连续 ${parseInt(localStorage.getItem('javaStreak')||'0') + 1} 天\n免费刷题：Abyte-zym.github.io/java-daily-challenge`;
+
+// Streak
+let streak = parseInt(localStorage.getItem('javaStreak')||'0');
+let lastDate = localStorage.getItem('javaLastDate')||'';
+let todayStr = new Date().toDateString();
+if(lastDate !== todayStr) {
+  let yesterday = new Date(Date.now()-86400000).toDateString();
+  if(lastDate === yesterday) streak++; else streak = 1;
+  localStorage.setItem('javaStreak', streak);
+  localStorage.setItem('javaLastDate', todayStr);
+}
+document.getElementById('streakCount').textContent = streak;
+
+// Streak bar
+let bar = document.getElementById('streakBar');
+for(let i=0;i<7;i++) {
+  let d = document.createElement('div');
+  d.className = 'streak-day' + (i<(streak%7||7) ? ' done' : '');
+  bar.appendChild(d);
+}
+
+// Badges
+if(streak>=1) document.getElementById('badge1d').classList.add('pulse');
+if(streak>=3) document.getElementById('badge3d').classList.add('pulse');
+if(streak>=7) document.getElementById('badge7d').classList.add('pulse');
+if(streak>=14) document.getElementById('badge14d').classList.add('pulse');
+if(streak>=30) document.getElementById('badge30d').classList.add('pulse');
+
+function showAnswer(){
+  document.getElementById('answerSection').classList.add('show');
+  document.getElementById('showBtn').style.display='none';
+}
+function markDone(){
+  document.getElementById('shareSection').style.display='block';
+  localStorage.setItem('javaDone', todayStr);
+}
+function copyShare(){
+  navigator.clipboard.writeText(document.getElementById('shareText').textContent).then(()=>{
+    document.getElementById('copyMsg').textContent='✅ 已复制！去朋友圈粘贴';
+  });
+}
+// Countdown to next problem
+function updateCountdown(){
+  let now = new Date();
+  let next = new Date(now);
+  next.setHours(24,0,0,0);
+  let diff = next - now;
+  let h = Math.floor(diff/3600000);
+  let m = Math.floor((diff%3600000)/60000);
+  let s = Math.floor((diff%60000)/1000);
+  document.getElementById('countdown').textContent = `${h}时${m}分${s}秒`;
+}
+updateCountdown(); setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
